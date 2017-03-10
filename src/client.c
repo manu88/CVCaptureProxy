@@ -72,7 +72,11 @@ int main(int argc, const char * argv[])
     GBSocket* clientSocket = GBSocketCreate( GBSocketTypeTCP, NULL);
     
     GBRunLoopSourceSetUserContext(clientSocket, client);
-    if(GBTCPSocketConnectToEndPoint( clientSocket, GBSTR("127.0.0.1"), 1230))
+
+    const char *ip = argc>=2? argv[1] : "127.0.0.1";
+    printf("Connect to '%s' \n" , ip);
+
+    if(GBTCPSocketConnectToEndPoint( clientSocket, GBSTR( ip), 1230))
     {
         printf("Connected To StreamService \n");
         GBStreamClientSetSocket(client , clientSocket);
