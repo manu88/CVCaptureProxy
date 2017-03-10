@@ -7,7 +7,14 @@
 //
 
 #include <opencv2/core/core_c.h>
+
+#ifdef OPENCV3
 #include <opencv2/videoio/videoio_c.h>
+#else
+#include <opencv2/highgui/highgui_c.h>
+#endif
+
+
 
 #include <stdio.h>
 #include <GBStreamService.h>
