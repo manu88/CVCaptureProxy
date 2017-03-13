@@ -24,11 +24,23 @@
 
 #include "Commons.h"
 
+static void ServiceInvokeRequest( GBRunLoop*runLoop, void* data);
+static void ServiceInvokeFirstRequest( GBRunLoop*runLoop, void* data);
+
 static CvCapture* camera = NULL;
 
 
 static void serviceSourceCallback( GBRunLoopSource* source , GBRunLoopSourceNotification notification);
 
+
+static GBSize streamServiceGetData ( GBStreamService* stream , void* ptr)
+{
+    StreamDescription *desc = ptr;
+    desc->frameSize = (uint32_t) frameSize;
+    
+    return sizeof(StreamDescription);
+    
+}
 static GBSize streamServiceGetFrame( GBStreamService* stream , void* ptr)
 {
     assert(stream);
@@ -50,6 +62,23 @@ static GBSize streamServiceGetFrame( GBStreamService* stream , void* ptr)
     return (GBSize) img->imageSize;
 }
 
+
+
+static void ServiceInvokeFirstRequest( GBRunLoop*runLoop, void* data)
+{
+    GBStreamService* service = data;
+    assert(service);
+    if( service == NULL)
+    {
+        return;
+    }
+    
+    if( GBStreamServiceRequestDataSend(service))
+    {
+        GBRunLoopDispatchAfter(runLoop, ServiceInvokeRequest, service, interval);
+    }
+}
+
 static void ServiceInvokeRequest( GBRunLoop*runLoop, void* data)
 {
     GBStreamService* service = data;
@@ -59,7 +88,7 @@ static void ServiceInvokeRequest( GBRunLoop*runLoop, void* data)
         const GBSize numClients = GBStreamServiceGetNumClients(service);
         if( numClients > 0)
         {
-            if( GBStreamServiceRequestSend(service))
+            if( GBStreamServiceRequestFrameSend(service))
             {
                 GBRunLoopDispatchAfter(runLoop, ServiceInvokeRequest, service, interval);
             }
@@ -93,7 +122,7 @@ static void serviceSourceCallback( GBRunLoopSource* source , GBRunLoopSourceNoti
             }
             
             GBRunLoopDispatchAsync(GBRunLoopSourceGetRunLoop(source),
-                                   ServiceInvokeRequest,
+                                   ServiceInvokeFirstRequest,
                                    service
                                    );
             
@@ -157,6 +186,7 @@ int main(int argc, const char * argv[])
     
     GBStreamServiceCallbacks callbacks;
     callbacks.getFrame = streamServiceGetFrame;
+    callbacks.getData = streamServiceGetData;
     GBStreamService* service = GBStreamServiceInit( callbacks , frameSize );
 
     GBRunLoop* runLoop = GBRunLoopInit();

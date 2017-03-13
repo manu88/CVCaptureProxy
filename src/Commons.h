@@ -14,4 +14,9 @@
 GBTimeMS interval  = 40;
 GBSize   frameSize = 1228800;
 
+typedef struct
+{
+    uint32_t frameSize ;
+}StreamDescription;
+
 #endif /* Commons_h */

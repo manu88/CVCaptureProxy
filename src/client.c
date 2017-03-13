@@ -21,7 +21,26 @@
 static IplImage img;
 
 static void ClientDidReceiveFrame( GBStreamClient* client);
+static void ClientDidReceiveData( GBStreamClient* client , const void* msg );
 
+
+static void ClientDidReceiveData( GBStreamClient* client , const void* msg )
+{
+    assert(client);
+    printf("Got DATA \n");
+    
+    const StreamDescription* desc = msg;
+    
+    
+    const int magicCoefToFindOut = 4;
+    img.nChannels = 3;
+    img.width     = 640;
+    img.height    = 480;
+    img.widthStep = 640 * magicCoefToFindOut;// 2560 @ w = 640;
+    img.nSize = sizeof(IplImage);// 144;
+    img.imageData = malloc( desc->frameSize );
+    
+}
 static void ClientDidReceiveFrame( GBStreamClient* client)
 {
     assert(client);
@@ -37,7 +56,7 @@ static void ClientDidReceiveFrame( GBStreamClient* client)
     if(cvWaitKey((int) interval) > 0)
     {
         printf("[Client] Stop request \n");
-        GBRunLoopStop( GBRunLoopSourceGetRunLoop( GBStreamClientGetSocket(client)));
+        GBRunLoopStop( GBRunLoopSourceGetRunLoop( GBStreamClientGetSource(client)));
     }
     
 }
@@ -51,16 +70,12 @@ int main(int argc, const char * argv[])
     
     memset(&img, 0, sizeof(IplImage));
     
-    const int magicCoefToFindOut = 4;
-    img.nChannels = 3;
-    img.width     = 640;
-    img.height    = 480;
-    img.widthStep = 640 * magicCoefToFindOut;// 2560 @ w = 640;
-    img.nSize = sizeof(IplImage);// 144;
-    img.imageData = malloc(frameSize);
+    
     
     GBStreamClientCallbacks callbacks;
     callbacks.didReceiveFrame = ClientDidReceiveFrame;
+    callbacks.didReceiveData  = ClientDidReceiveData;
+    
     GBStreamClient* client = GBStreamClientInit( callbacks, frameSize);
     
     assert(client);
@@ -74,12 +89,13 @@ int main(int argc, const char * argv[])
     GBRunLoopSourceSetUserContext(clientSocket, client);
 
     const char *ip = argc>=2? argv[1] : "127.0.0.1";
+
     printf("Connect to '%s' \n" , ip);
 
     if(GBTCPSocketConnectToEndPoint( clientSocket, GBSTR( ip), 1230))
     {
         printf("Connected To StreamService \n");
-        GBStreamClientSetSocket(client , clientSocket);
+        GBStreamClientSetSource(client , clientSocket);
         GBRunLoopAddSource(runLoop, clientSocket);
         GBRunLoopRun(runLoop);
     }
