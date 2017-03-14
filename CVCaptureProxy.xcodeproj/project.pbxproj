@@ -14,6 +14,8 @@
 		5969820E1E714D6A00B7B8D1 /* libopencv_highgui.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 5969820D1E714D6A00B7B8D1 /* libopencv_highgui.dylib */; };
 		59ACB0371E72AF8700D2AA7A /* server.c in Sources */ = {isa = PBXBuildFile; fileRef = 59ACB0361E72AF8200D2AA7A /* server.c */; };
 		59ACB0381E72AF8A00D2AA7A /* client.c in Sources */ = {isa = PBXBuildFile; fileRef = 59ACB0341E72AF8200D2AA7A /* client.c */; };
+		59ACB03E1E77D93100D2AA7A /* libopencv_imgcodecs.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 59ACB03D1E77D93100D2AA7A /* libopencv_imgcodecs.dylib */; };
+		59ACB0411E77DD1000D2AA7A /* libopencv_imgcodecs.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 59ACB03D1E77D93100D2AA7A /* libopencv_imgcodecs.dylib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -47,6 +49,8 @@
 		59ACB0341E72AF8200D2AA7A /* client.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = client.c; sourceTree = "<group>"; };
 		59ACB0351E72AF8200D2AA7A /* Commons.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Commons.h; sourceTree = "<group>"; };
 		59ACB0361E72AF8200D2AA7A /* server.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = server.c; sourceTree = "<group>"; };
+		59ACB03D1E77D93100D2AA7A /* libopencv_imgcodecs.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopencv_imgcodecs.dylib; path = ../../../../../../usr/local/lib/libopencv_imgcodecs.dylib; sourceTree = "<group>"; };
+		59ACB03F1E77DCEE00D2AA7A /* libopencv_imgproc.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopencv_imgproc.dylib; path = ../../../../../../usr/local/lib/libopencv_imgproc.dylib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -56,6 +60,7 @@
 			files = (
 				596982051E7144DF00B7B8D1 /* libGroundBase.dylib in Frameworks */,
 				5969820A1E71477B00B7B8D1 /* libopencv_core.dylib in Frameworks */,
+				59ACB03E1E77D93100D2AA7A /* libopencv_imgcodecs.dylib in Frameworks */,
 				5969820C1E71479300B7B8D1 /* libopencv_videoio.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -66,6 +71,7 @@
 			files = (
 				596982041E7144D500B7B8D1 /* libGroundBase.dylib in Frameworks */,
 				5969820E1E714D6A00B7B8D1 /* libopencv_highgui.dylib in Frameworks */,
+				59ACB0411E77DD1000D2AA7A /* libopencv_imgcodecs.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -93,6 +99,8 @@
 		596982021E7144D500B7B8D1 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				59ACB03F1E77DCEE00D2AA7A /* libopencv_imgproc.dylib */,
+				59ACB03D1E77D93100D2AA7A /* libopencv_imgcodecs.dylib */,
 				5969820D1E714D6A00B7B8D1 /* libopencv_highgui.dylib */,
 				5969820B1E71479300B7B8D1 /* libopencv_videoio.dylib */,
 				596982091E71477B00B7B8D1 /* libopencv_core.dylib */,
@@ -213,7 +221,7 @@
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = NO;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
@@ -265,7 +273,7 @@
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = NO;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;

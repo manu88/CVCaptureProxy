@@ -22,7 +22,15 @@
 #include <stdio.h>
 
 
+
+
 #include "Commons.h"
+
+
+
+static IplImage* img = NULL;
+static StreamType imgType = StreamRaw;
+static GBSize frameSize = GBSizeInvalid;
 
 static void ServiceInvokeRequest( GBRunLoop*runLoop, void* data);
 static void ServiceInvokeFirstRequest( GBRunLoop*runLoop, void* data);
@@ -35,31 +43,53 @@ static void serviceSourceCallback( GBRunLoopSource* source , GBRunLoopSourceNoti
 
 static GBSize streamServiceGetData ( GBStreamService* stream , void* ptr)
 {
+    //img = cvQueryFrame( camera );
+    
+    DEBUG_ASSERT(img);
+    
     StreamDescription *desc = ptr;
     desc->frameSize = (uint32_t) frameSize;
+    desc->width     = img->width;
+    desc->height    = img->height;
+    desc->nChannels = img->nChannels;
+    desc->nChannels = 3;
+    desc->type = imgType;
     
     return sizeof(StreamDescription);
     
 }
+
+static CvMat* encodeImage( IplImage* img , int quality)
+{
+    const int params[] = {CV_IMWRITE_JPEG_QUALITY , quality , 0};
+    return cvEncodeImage(".jpg", img, params);
+}
+
 static GBSize streamServiceGetFrame( GBStreamService* stream , void* ptr)
 {
     assert(stream);
     assert(ptr);
     printf("[streamServiceSendFrame] \n");
     
-    IplImage* img = cvQueryFrame( camera );
+    img = cvQueryFrame( camera );
     
-    assert( (GBSize) img->imageSize == GBStreamServiceGetSize(stream));
-    /*
-    uint8_t* buf = ptr;
-    for (GBIndex i = 0; i < GBStreamServiceGetSize(stream) ; ++i)
+    if( imgType == StreamJPEG)
     {
-        buf[i] = (uint8_t)i;
+        const CvMat* encoded = encodeImage(img, 50);
+        const size_t imgSize = encoded->step*encoded->rows;
+        memcpy(ptr, encoded, imgSize);
+        return (GBSize) imgSize;
+        
     }
-     */
-    memcpy( ptr, img->imageData, img->imageSize);
+    else if( imgType == StreamRaw)
+    {
+        memcpy( ptr, img->imageData, img->imageSize);
+        
+        return (GBSize) img->imageSize;
+    }
     
-    return (GBSize) img->imageSize;
+    
+    return GBSizeInvalid;
 }
 
 
@@ -91,6 +121,10 @@ static void ServiceInvokeRequest( GBRunLoop*runLoop, void* data)
             if( GBStreamServiceRequestFrameSend(service))
             {
                 GBRunLoopDispatchAfter(runLoop, ServiceInvokeRequest, service, interval);
+            }
+            else
+            {
+                printf("[GBStreamServiceRequestFrameSend] Error r\n");
             }
         }
         /*
@@ -174,12 +208,27 @@ int main(int argc, const char * argv[])
     setupCamera(camera , 640 , 480);
     
     
-    IplImage* img = cvQueryFrame( camera );
-    printf("Image Size %i \n" , img->imageSize);
+    img = cvQueryFrame( camera );
+    
+    
+    
+    if( imgType == StreamJPEG)
+    {
+        printf("USING JPEG ENCODING\n");
+        const CvMat* encoded = encodeImage(img, 50);
+        frameSize = encoded->step*encoded->rows;
+    }
+    else if( imgType == StreamRaw)
+    {
+        frameSize = img->imageSize;
+    }
+    printf("Image Size %zi \n" , frameSize);
     printf("Channels %i \n" , img->nChannels);
     printf("Width %i \n", img->width);
     printf("height %i \n", img->height);
     printf("widthStep %i \n", img->widthStep);
+    
+    
     assert(img->nSize == sizeof(IplImage));
     
     

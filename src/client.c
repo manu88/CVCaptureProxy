@@ -19,26 +19,49 @@
 
 
 static IplImage img;
+StreamType streamType = 0;
 
 static void ClientDidReceiveFrame( GBStreamClient* client);
 static void ClientDidReceiveData( GBStreamClient* client , const void* msg );
-
+static void ClientDidReceiveNotification( GBStreamClient* client , GBRunLoopSourceNotification notification );
 
 static void ClientDidReceiveData( GBStreamClient* client , const void* msg )
 {
     assert(client);
-    printf("Got DATA \n");
+    printf("Got Stream Description \n");
+    
     
     const StreamDescription* desc = msg;
+    DEBUG_ASSERT(desc);
     
-    
+    if(desc->type == StreamRaw)
+    {
+        streamType = desc->type;
+        
+        printf("Raw Encoding \n");
+    }
+    else if(desc->type == StreamJPEG)
+    {
+        printf("JPEG Encoding \n");
+    }
     const int magicCoefToFindOut = 4;
-    img.nChannels = 3;
-    img.width     = 640;
-    img.height    = 480;
-    img.widthStep = 640 * magicCoefToFindOut;// 2560 @ w = 640;
+    img.nChannels = desc->nChannels;
+    img.width     = desc->width;
+    img.height    = desc->height;
+    
+    img.widthStep = desc->width * magicCoefToFindOut;// 2560 @ w = 640;
     img.nSize = sizeof(IplImage);// 144;
     img.imageData = malloc( desc->frameSize );
+    img.imageSize = desc->frameSize;
+    
+    const GBSize frameSize = (GBSize)img.imageSize;
+    
+    printf("Image wStep %i \n" , img.widthStep);
+    printf("Frame Size %zi \n" , frameSize);
+    
+    GBStreamClientSetFrameSize(client,frameSize  );
+     
+    
     
 }
 static void ClientDidReceiveFrame( GBStreamClient* client)
@@ -49,10 +72,22 @@ static void ClientDidReceiveFrame( GBStreamClient* client)
     assert( frame);
     
     
-    memcpy(img.imageData, frame, GBStreamClientGetSize(client) );
+    
+    IplImage* _img = NULL;
+    
+    if( streamType == StreamJPEG)
+    {
+        _img = cvDecodeImage(frame, CV_LOAD_IMAGE_COLOR);
+    }
+    else if( streamType == StreamRaw)
+    {
+        memcpy(img.imageData, frame, GBStreamClientGetFrameSize(client) );
+        _img = &img;
+    }
+
     
     
-    cvShowImage("Video", &img);
+    cvShowImage("Video", _img);
     if(cvWaitKey((int) interval) > 0)
     {
         printf("[Client] Stop request \n");
@@ -61,6 +96,17 @@ static void ClientDidReceiveFrame( GBStreamClient* client)
     
 }
 
+
+static void ClientDidReceiveNotification( GBStreamClient* client , GBRunLoopSourceNotification notification )
+{
+    printf("Client Got notification %i \n" , notification);
+    
+    if( notification == GBRunLoopSourceRemovedFromRunLoop)
+    {
+        GBRunLoopStop( GBRunLoopSourceGetRunLoop( GBStreamClientGetSource(client)));
+        
+    }
+}
 
 
 
@@ -73,10 +119,10 @@ int main(int argc, const char * argv[])
     
     
     GBStreamClientCallbacks callbacks;
-    callbacks.didReceiveFrame = ClientDidReceiveFrame;
-    callbacks.didReceiveData  = ClientDidReceiveData;
-    
-    GBStreamClient* client = GBStreamClientInit( callbacks, frameSize);
+    callbacks.didReceiveFrame        = ClientDidReceiveFrame;
+    callbacks.didReceiveData         = ClientDidReceiveData;
+    callbacks.didReceiveNotification = ClientDidReceiveNotification;
+    GBStreamClient* client = GBStreamClientInit( callbacks );
     
     assert(client);
     
