@@ -120,7 +120,7 @@ static void ClientDidReceiveNotification( GBStreamClient* client , GBRunLoopSour
 {
     printf("Client Got notification %i \n" , notification);
     
-    if( notification == GBRunLoopSourceRemovedFromRunLoop)
+    if( notification == GBRunLoopSourceRemovedFromRunLoop || notification == GBRunLoopSourceErrorRead)
     {
         GBRunLoopStop( GBRunLoopSourceGetRunLoop( GBStreamClientGetSource(client)));
         
