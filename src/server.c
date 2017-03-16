@@ -29,7 +29,7 @@ static int jpegQual = 50;
 
 /**/
 static IplImage* img = NULL;
-static GBSize frameSize = GBSizeInvalid;
+static GBSize frameSize = 0;
 
 static void ServiceInvokeRequest( GBRunLoop*runLoop, void* data);
 static void ServiceInvokeFirstRequest( GBRunLoop*runLoop, void* data);
@@ -236,6 +236,7 @@ static void inputCallback( GBRunLoopSource* source , GBRunLoopSourceNotification
 
 int main(int argc, const char * argv[])
 {
+    frameSize = GBSizeInvalid;
     printf("--- Start Service --- \n");
     
     camera = cvCreateCameraCapture(0);
