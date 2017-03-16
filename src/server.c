@@ -78,7 +78,7 @@ static GBSize streamServiceGetFrame( GBStreamService* stream , void* ptr)
         
         memcpy(ptr, (const char*) encoded->data.ptr, imgSize);
         
-        //cvReleaseMat(&encoded);
+        cvReleaseMat(&encoded);
         return (GBSize) imgSize;
         
     }
