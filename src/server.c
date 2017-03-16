@@ -240,7 +240,7 @@ int main(int argc, const char * argv[])
     
     camera = cvCreateCameraCapture(0);
     
-    //setupCamera(camera , 640 , 480);
+    setupCamera(camera , 640 , 480);
     
     
     img = cvQueryFrame( camera );
