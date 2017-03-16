@@ -15,21 +15,20 @@
 #endif
 
 
-
 #include <stdio.h>
 #include <GBStreamService.h>
 #include <GBRunLoop.h>
-#include <stdio.h>
-
-
-
-
+#include <GBFDSource.h>
 #include "Commons.h"
 
 
 
+
+static const StreamType imgType =  StreamJPEG;
+static int jpegQual = 50;
+
+/**/
 static IplImage* img = NULL;
-static StreamType imgType = StreamRaw;
 static GBSize frameSize = GBSizeInvalid;
 
 static void ServiceInvokeRequest( GBRunLoop*runLoop, void* data);
@@ -69,15 +68,17 @@ static GBSize streamServiceGetFrame( GBStreamService* stream , void* ptr)
 {
     assert(stream);
     assert(ptr);
-    printf("[streamServiceSendFrame] \n");
     
     img = cvQueryFrame( camera );
     
     if( imgType == StreamJPEG)
     {
-        const CvMat* encoded = encodeImage(img, 50);
+        CvMat* encoded = encodeImage(img, jpegQual );
         const size_t imgSize = encoded->step*encoded->rows;
-        memcpy(ptr, encoded, imgSize);
+        
+        memcpy(ptr, (const char*) encoded->data.ptr, imgSize);
+        
+        //cvReleaseMat(&encoded);
         return (GBSize) imgSize;
         
     }
@@ -124,7 +125,7 @@ static void ServiceInvokeRequest( GBRunLoop*runLoop, void* data)
             }
             else
             {
-                printf("[GBStreamServiceRequestFrameSend] Error r\n");
+                printf("[GBStreamServiceRequestFrameSend] Error\n");
             }
         }
         /*
@@ -175,6 +176,9 @@ BOOLEAN_RETURN uint8_t setupCamera( CvCapture* camera , double width , double he
 {
     const double nativeW = cvGetCaptureProperty( camera, CV_CAP_PROP_FRAME_WIDTH);
     const double nativeH = cvGetCaptureProperty( camera, CV_CAP_PROP_FRAME_HEIGHT);
+   
+    if (width == nativeW && height == nativeH)
+        return 1;
     
     printf("Native Stream %f %f \n", nativeW , nativeH );
     
@@ -199,13 +203,44 @@ BOOLEAN_RETURN uint8_t setupCamera( CvCapture* camera , double width , double he
     return hh == height;
 }
 
+static void inputCallback( GBRunLoopSource* source , GBRunLoopSourceNotification notification)
+{
+    static char buf[16];
+    memset(buf, 0, 16);
+    
+    const GBSize size =  GBRunLoopSourceRead(source, buf, 16 );
+    
+    if( size)
+    {
+        
+        const GBString* raw = GBStringInitWithFormat("%s" , buf);
+        const GBString* cmd = GBStringByRemovingChars(raw, "\n");
+    
+        int qual = -1;
+        if( GBStringEqualsCStr(cmd, "q"))
+        {
+            GBRunLoopStop( GBRunLoopSourceGetRunLoop(source));
+        }
+        if( GBStringScan(cmd, "%i" , &qual) == 1)
+        {
+            printf("Set Quality to %i\n" , qual);
+            jpegQual  = qual;
+        }
+        
+        //printf("'%s'\n" , GBStringGetCStr(cmd) );
+        GBRelease(cmd);
+        GBRelease(raw);
+    }
+    
+}
+
 int main(int argc, const char * argv[])
 {
     printf("--- Start Service --- \n");
     
     camera = cvCreateCameraCapture(0);
     
-    setupCamera(camera , 640 , 480);
+    //setupCamera(camera , 640 , 480);
     
     
     img = cvQueryFrame( camera );
@@ -215,8 +250,9 @@ int main(int argc, const char * argv[])
     if( imgType == StreamJPEG)
     {
         printf("USING JPEG ENCODING\n");
-        const CvMat* encoded = encodeImage(img, 50);
-        frameSize = encoded->step*encoded->rows;
+        /*const CvMat* encoded = encodeImage(img, 50);
+        frameSize = encoded->step*encoded->rows;*/
+        frameSize = img->imageSize;
     }
     else if( imgType == StreamRaw)
     {
@@ -240,16 +276,21 @@ int main(int argc, const char * argv[])
 
     GBRunLoop* runLoop = GBRunLoopInit();
 
+    GBFDSource* input = GBFDSourceInitWithFD( fileno( stdin), inputCallback);
+    
     GBSocket* listener = GBTCPSocketCreateListener(1230, 10, serviceSourceCallback);
     GBRunLoopSourceSetUserContext(listener, service);
     GBRunLoopAddSource(runLoop, listener);
+    GBRunLoopAddSource(runLoop, input);
     GBRunLoopRun( runLoop);
     
     GBRelease(listener);
     GBRelease(runLoop);
     GBRelease(service);
-    
+    GBRelease(input);
     cvReleaseCapture(&camera);
     
+    
+    GBObjectIntrospection(1);
     return 0;
 }

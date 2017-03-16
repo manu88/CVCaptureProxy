@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		590F24D11E79275300A05B41 /* libopencv_core.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 596982091E71477B00B7B8D1 /* libopencv_core.dylib */; };
 		596982041E7144D500B7B8D1 /* libGroundBase.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 596982031E7144D500B7B8D1 /* libGroundBase.dylib */; };
 		596982051E7144DF00B7B8D1 /* libGroundBase.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 596982031E7144D500B7B8D1 /* libGroundBase.dylib */; };
 		5969820A1E71477B00B7B8D1 /* libopencv_core.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 596982091E71477B00B7B8D1 /* libopencv_core.dylib */; };
@@ -17,6 +18,37 @@
 		59ACB03E1E77D93100D2AA7A /* libopencv_imgcodecs.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 59ACB03D1E77D93100D2AA7A /* libopencv_imgcodecs.dylib */; };
 		59ACB0411E77DD1000D2AA7A /* libopencv_imgcodecs.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 59ACB03D1E77D93100D2AA7A /* libopencv_imgcodecs.dylib */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		590F24C91E7820F300A05B41 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 590F24C21E7820F200A05B41 /* GroundBase.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 59503D491D378D7400FDA861;
+			remoteInfo = GroundBase;
+		};
+		590F24CB1E7820F300A05B41 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 590F24C21E7820F200A05B41 /* GroundBase.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 59503D5F1D378DD400FDA861;
+			remoteInfo = TestGroundBase;
+		};
+		590F24CD1E7820F300A05B41 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 590F24C21E7820F200A05B41 /* GroundBase.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 59612C2C1DB6A32E005222E7;
+			remoteInfo = Server;
+		};
+		590F24CF1E7820F300A05B41 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 590F24C21E7820F200A05B41 /* GroundBase.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 59612C3B1DB6A3BA005222E7;
+			remoteInfo = Client;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		596981ED1E71449900B7B8D1 /* CopyFiles */ = {
@@ -40,6 +72,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		590F24C21E7820F200A05B41 /* GroundBase.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = GroundBase.xcodeproj; path = ../FlyLab/GroundBase/GroundBase.xcodeproj; sourceTree = "<group>"; };
 		596981EF1E71449900B7B8D1 /* Server */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Server; sourceTree = BUILT_PRODUCTS_DIR; };
 		596982011E7144A100B7B8D1 /* Client */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Client; sourceTree = BUILT_PRODUCTS_DIR; };
 		596982031E7144D500B7B8D1 /* libGroundBase.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libGroundBase.dylib; path = ../../../../../../../usr/local/lib/libGroundBase.dylib; sourceTree = "<group>"; };
@@ -69,6 +102,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				590F24D11E79275300A05B41 /* libopencv_core.dylib in Frameworks */,
 				596982041E7144D500B7B8D1 /* libGroundBase.dylib in Frameworks */,
 				5969820E1E714D6A00B7B8D1 /* libopencv_highgui.dylib in Frameworks */,
 				59ACB0411E77DD1000D2AA7A /* libopencv_imgcodecs.dylib in Frameworks */,
@@ -78,9 +112,21 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		590F24C31E7820F200A05B41 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				590F24CA1E7820F300A05B41 /* libGroundBase.dylib */,
+				590F24CC1E7820F300A05B41 /* TestGroundBase */,
+				590F24CE1E7820F300A05B41 /* Server */,
+				590F24D01E7820F300A05B41 /* Client */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		596981E61E71449900B7B8D1 = {
 			isa = PBXGroup;
 			children = (
+				590F24C21E7820F200A05B41 /* GroundBase.xcodeproj */,
 				59ACB0331E72AF8200D2AA7A /* src */,
 				596981F01E71449900B7B8D1 /* Products */,
 				596982021E7144D500B7B8D1 /* Frameworks */,
@@ -181,6 +227,12 @@
 			mainGroup = 596981E61E71449900B7B8D1;
 			productRefGroup = 596981F01E71449900B7B8D1 /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 590F24C31E7820F200A05B41 /* Products */;
+					ProjectRef = 590F24C21E7820F200A05B41 /* GroundBase.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				596981EE1E71449900B7B8D1 /* Server */,
@@ -188,6 +240,37 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		590F24CA1E7820F300A05B41 /* libGroundBase.dylib */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.dylib";
+			path = libGroundBase.dylib;
+			remoteRef = 590F24C91E7820F300A05B41 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		590F24CC1E7820F300A05B41 /* TestGroundBase */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = TestGroundBase;
+			remoteRef = 590F24CB1E7820F300A05B41 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		590F24CE1E7820F300A05B41 /* Server */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = Server;
+			remoteRef = 590F24CD1E7820F300A05B41 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		590F24D01E7820F300A05B41 /* Client */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = Client;
+			remoteRef = 590F24CF1E7820F300A05B41 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXSourcesBuildPhase section */
 		596981EB1E71449900B7B8D1 /* Sources */ = {
